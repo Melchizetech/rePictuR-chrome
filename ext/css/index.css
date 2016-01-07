@@ -35,6 +35,23 @@
     background: -o-linear-gradient(#fff, #999);
 }
 
+.rePictuR-table {
+	width: 100%;
+}
+
+.rePictuR-table td {
+
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+
+.rePictuR-td-ellipsis {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .rePictuR-modal-close {
     background: #606061;
     color: #FFFFFF;

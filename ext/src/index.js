@@ -37,7 +37,7 @@
 		      return passed;
 		    }
 		  });
-		}
+		};
 
 		function getImageBlob(imgUrl, proxyUrl) {
 			return fetch(imgUrl)
@@ -59,7 +59,7 @@
 			  	width: this.width,
 			  	height: this.height
 			  });
-			}
+			};
 			img.onerror = function (err) {
 			  defered.reject(err);
 			};
@@ -72,6 +72,31 @@
 			defered.resolve([].slice.call(document.getElementsByTagName('img'), 0));
 			return defered.promise;
 		}
+		
+		function getImgType(imgUrl) {
+
+			if (imgUrl.indexOf('.jpg') !== -1 || imgUrl.indexOf('.jpeg') !== -1) {
+				return 'jpg'
+			} else if (imgUrl.indexOf('.png')) {
+				return 'png';
+			}
+		}
+
+		function humanFileSize(bytes, si) {
+		    var thresh = si ? 1000 : 1024;
+		    if(Math.abs(bytes) < thresh) {
+		        return bytes + ' B';
+		    }
+		    var units = si
+		        ? ['kB','MB','GB','TB','PB','EB','ZB','YB']
+		        : ['KiB','MiB','GiB','TiB','PiB','EiB','ZiB','YiB'];
+		    var u = -1;
+		    do {
+		        bytes /= thresh;
+		        ++u;
+		    } while(Math.abs(bytes) >= thresh && u < units.length - 1);
+		    return bytes.toFixed(1)+' '+units[u];
+		}
 
 		var applicationId = "f7341211-37d8-4562-9eb9-3880991329e9";
 		var clientId = "chrome-plugin";
@@ -81,14 +106,22 @@
 
 	  		// Populate the builder with the wanted options, you must set at least image url and dimensions
 		  	var builder = repictur.Builder.setImageUrl(imgUrl)
-		  		.setCrop(true);
+		  		.setExact(true);
 
 	  		if (width && height) {
 	  			builder.setDimensions(width, height);	
 	  		}
 
+	  		var imgType = getImgType(imgUrl);
+
+	  		if (imgType === 'jpg') {
+	  			builder.setJpegFormat();
+	  		} else if (imgType === 'png') {
+  				builder.setPngFormat();
+	  		}
+
 		    return builder.build();
-		};
+		}
 
 		repictur_ext.getStats = function () {
 
@@ -100,7 +133,7 @@
 			getImgs().then(function (imgs) {
 
 				var imagesStats = imgs.filter(function (img) {
-					return img.src;
+					return img.src && getImgType(img.src);
 				}).map(function (img) {
 
 					var imgItem = {
@@ -150,8 +183,10 @@
 			var modal = document.createElement('div');
 			modal.className = 'rePictuR-modal';
 			modal.addEventListener('click', function () {
-				modal.parentNode.removeChild(modal);
-			})
+				if (modal.parentNode) {
+					modal.parentNode.removeChild(modal);	
+				}
+			});
 
 			var modalBody = document.createElement('div');
 			modalBody.className = 'rePictuR-modal-body';
@@ -161,30 +196,48 @@
 			modalClose.className = 'rePictuR-modal-close';
 			modalClose.innerText = "X";
 			modalClose.addEventListener('click', function () {
-				modal.parentNode.removeChild(modal);
-			})
+				if (modal.parentNode) {
+					modal.parentNode.removeChild(modal);	
+				}
+			});
 			modalBody.appendChild(modalClose);
 
 			var tableContent = document.createElement('table');
+			tableContent.className = "rePictuR-table";
 			modalBody.appendChild(tableContent);
+
+			var tr = document.createElement('tr');
+			tableContent.appendChild(tr);
+
+			var th = document.createElement('th');
+			th.innerText = 'Source';
+			tr.appendChild(th);
+
+			th = document.createElement('th');
+			th.innerText = 'Before';
+			tr.appendChild(th);
+
+			th = document.createElement('th');
+			th.innerText = 'After';
+			tr.appendChild(th);
 
 			imagesStats.forEach(function (imagesStat) {
 
 				var tr = document.createElement('tr');
+				tableContent.appendChild(tr);
 
 				var td = document.createElement('td');
 				td.innerText = imagesStat.url;
+				td.className = "rePictuR-td-ellipsis";
 				tr.appendChild(td);
 
-				var td = document.createElement('td');
-				td.innerText = 'Before ' + imagesStat.size + ' / ';
+				td = document.createElement('td');
+				td.innerText = humanFileSize(imagesStat.size);
 				tr.appendChild(td);
 
-				var td = document.createElement('td');
-				td.innerText = 'After ' + imagesStat.proxy_size;
+				td = document.createElement('td');
+				td.innerText = humanFileSize(imagesStat.proxy_size);
 				tr.appendChild(td);
-
-				modalBody.appendChild(tr);
 			});
 
 			document.body.appendChild(modal);
@@ -214,7 +267,7 @@
 		};
 
 		return repictur_ext;
-	}
+	};
 
 	// Define globally if it doesn't already exist
     if (typeof repictur_ext === 'undefined') {
@@ -224,4 +277,3 @@
       throw new Error('repictur_ext is already defined.');
     }
 })(window);
-

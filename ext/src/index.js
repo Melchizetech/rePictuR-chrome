@@ -115,7 +115,7 @@
 	  		var imgType = getImgType(imgUrl);
 
 	  		if (imgType === 'jpg') {
-	  			builder.setJpegFormat();
+	  			builder.setJpegFormat(80);
 	  		} else if (imgType === 'png') {
   				builder.setPngFormat();
 	  		}
@@ -141,7 +141,7 @@
 						url: img.src,
 						display: {
 							height: img.offsetHeight,
-							width: img.offsetHeight
+							width: img.offsetWidth
 						}
 					};
 
@@ -192,6 +192,7 @@
 			modalBody.className = 'rePictuR-modal-body';
 			modal.appendChild(modalBody);
 
+
 			var modalClose = document.createElement('a');
 			modalClose.className = 'rePictuR-modal-close';
 			modalClose.innerText = "X";
@@ -202,9 +203,13 @@
 			});
 			modalBody.appendChild(modalClose);
 
+			var modalContent = document.createElement('div');
+			modalContent.className = 'rePictuR-modal-content';
+			modalBody.appendChild(modalContent);
+
 			var tableContent = document.createElement('table');
 			tableContent.className = "rePictuR-table";
-			modalBody.appendChild(tableContent);
+			modalContent.appendChild(tableContent);
 
 			var tr = document.createElement('tr');
 			tableContent.appendChild(tr);

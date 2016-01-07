@@ -35,6 +35,11 @@
     background: -o-linear-gradient(#fff, #999);
 }
 
+.rePictuR-modal-content {
+	max-height: 500px;
+	overflow: auto;
+}
+
 .rePictuR-table {
 	width: 100%;
 }

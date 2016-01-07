@@ -108,7 +108,7 @@
 		  	var builder = repictur.Builder.setImageUrl(imgUrl)
 		  		.setExact(true);
 
-	  		if (width && height) {
+	  		if (width > 0 && height > 0) {
 	  			builder.setDimensions(width, height);	
 	  		}
 

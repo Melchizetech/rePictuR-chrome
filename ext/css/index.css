@@ -2,6 +2,20 @@
 	position: fixed;
 	bottom: 20px;
 	right: 20px;
+    text-align: center;
+    cursor: default;
+    color: buttontext;
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    background-color: buttonface;
+    box-sizing: border-box;
+    padding: 2px 6px 3px;
+    border: 2px outset buttonface;
+    font: normal;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .rePictuR-modal {

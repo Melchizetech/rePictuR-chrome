@@ -107,7 +107,7 @@
 	  		var imgType = getImgType(imgUrl);
 
 	  		if (imgType === 'jpg') {
-	  			builder.setJpegFormat(80);
+	  			builder.setJpegFormat(40);
 	  		} else if (imgType === 'png') {
   				builder.setPngFormat();
 	  		}
@@ -119,7 +119,8 @@
 			return imgUrl && getImgType(imgUrl) &&
 						imgUrl.indexOf('google') === -1 &&
 							imgUrl.indexOf('facebook') === -1 &&
-								imgUrl.indexOf('twitter') === -1;
+								imgUrl.indexOf('twitter') === -1 &&
+									imgUrl.indexOf('about:') === -1;
 
 		}
 

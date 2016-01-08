@@ -118,9 +118,16 @@
 		function isValidImageUrl(imgUrl) {
 			return imgUrl && getImgType(imgUrl) &&
 						imgUrl.indexOf('google') === -1 &&
-							imgUrl.indexOf('facebook') === -1 &&
-								imgUrl.indexOf('twitter') === -1 &&
-									imgUrl.indexOf('about:') === -1;
+						imgUrl.indexOf('facebook') === -1 &&
+						imgUrl.indexOf('twitter') === -1 &&
+						imgUrl.indexOf('realmedia') === -1 &&
+						imgUrl.indexOf('openad') === -1 &&
+						imgUrl.indexOf('adnxs') === -1 &&
+						imgUrl.indexOf('rubiconproject') === -1 &&
+						imgUrl.indexOf('hi-mediaserver') === -1 &&
+						imgUrl.indexOf('tradedoubler') === -1 &&
+						imgUrl.indexOf('doubleclick') === -1 &&
+						imgUrl.indexOf('about:') === -1;
 
 		}
 

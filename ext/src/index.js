@@ -144,7 +144,9 @@
 						}
 					};
 
-					if (imgItem.display.width > 0 && imgItem.display.height > 0) {
+					var imgType = getImgType(img.src);
+
+					if (imgItem.display.width > 0 && imgItem.display.height > 0 && (imgType === 'jpg' || imgType === 'png')) {
 						imgItem.rePictureUrl = repictur_ext.getProxyImg(img.src, imgItem.display.width, imgItem.display.height);
 					} else {
 						imgItem.rePictureUrl = imgItem.url;

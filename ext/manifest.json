@@ -1,9 +1,9 @@
 {
-  "name": "rePicture",
+  "name": "rePictuR",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "This extension was created for rePicture",
-  "homepage_url": "http://melchizetech.com",
+  "description": "This extension was created for rePictuR",
+  "homepage_url": "http://repictur.com",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",

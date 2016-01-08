@@ -74,7 +74,6 @@
 		}
 		
 		function getImgType(imgUrl) {
-
 			if (imgUrl.indexOf('.jpg') !== -1 || imgUrl.indexOf('.jpeg') !== -1) {
 				return 'jpg'
 			} else if (imgUrl.indexOf('.png')) {
@@ -98,7 +97,7 @@
 		    return bytes.toFixed(1)+' '+units[u];
 		}
 
-		var applicationId = "f7341211-37d8-4562-9eb9-3880991329e9";
+		var applicationId = "780a28c3-801f-4d31-ba1a-a3029bebfeb1";
 		var clientId = "chrome-plugin";
 		repictur.initialize("780a28c3-801f-4d31-ba1a-a3029bebfeb1", "gateway.repictur.com", false);
 
@@ -145,7 +144,11 @@
 						}
 					};
 
-					imgItem.rePictureUrl = repictur_ext.getProxyImg(img.src, imgItem.display.width, imgItem.display.height);
+					if (imgItem.display.width > 0 && imgItem.display.height > 0) {
+						imgItem.rePictureUrl = repictur_ext.getProxyImg(img.src, imgItem.display.width, imgItem.display.height);
+					} else {
+						imgItem.rePictureUrl = imgItem.url;
+					}
 				 	
 					imgItem.stats = [
 						getImageDims(imgItem.url).then(function (dims) {

@@ -97,19 +97,12 @@
 		    return bytes.toFixed(1)+' '+units[u];
 		}
 
-		var applicationId = "780a28c3-801f-4d31-ba1a-a3029bebfeb1";
-		var clientId = "chrome-plugin";
-		repictur.initialize("780a28c3-801f-4d31-ba1a-a3029bebfeb1", "gateway.repictur.com", false);
-
-		repictur_ext.getProxyImg = function(imgUrl, width, height) {
+		function getProxyImg(imgUrl, width, height) {
 
 	  		// Populate the builder with the wanted options, you must set at least image url and dimensions
 		  	var builder = repictur.Builder.setImageUrl(imgUrl)
-		  		.setExact(true);
-
-	  		if (width > 0 && height > 0) {
-	  			builder.setDimensions(width, height);	
-	  		}
+		  		.setExact(true)
+		  		.setDimensions(width, height);	
 
 	  		var imgType = getImgType(imgUrl);
 
@@ -122,6 +115,14 @@
 		    return builder.build();
 		}
 
+		function isValidImageUrl(imgUrl) {
+			return imgUrl && getImgType(imgUrl) &&
+						imgUrl.indexOf('google') === -1 &&
+							imgUrl.indexOf('facebook') === -1 &&
+								imgUrl.indexOf('twitter') === -1;
+
+		}
+
 		repictur_ext.getStats = function () {
 
 			var defered = Promise.defer();
@@ -132,7 +133,7 @@
 			getImgs().then(function (imgs) {
 
 				var imagesStats = imgs.filter(function (img) {
-					return img.src && getImgType(img.src);
+					return isValidImageUrl(img.src);
 				}).map(function (img) {
 
 					var imgItem = {
@@ -146,8 +147,12 @@
 
 					var imgType = getImgType(img.src);
 
-					if (imgItem.display.width > 0 && imgItem.display.height > 0 && (imgType === 'jpg' || imgType === 'png')) {
-						imgItem.rePictureUrl = repictur_ext.getProxyImg(img.src, imgItem.display.width, imgItem.display.height);
+					if (
+						imgItem.display.width > 0 && 
+							imgItem.display.height > 0 && 
+								(imgType === 'jpg' || imgType === 'png')
+					) {
+						imgItem.rePictureUrl = getProxyImg(img.src, imgItem.display.width, imgItem.display.height);
 					} else {
 						imgItem.rePictureUrl = imgItem.url;
 					}
@@ -187,11 +192,6 @@
 
 			var modal = document.createElement('div');
 			modal.className = 'rePictuR-modal';
-			modal.addEventListener('click', function () {
-				if (modal.parentNode) {
-					modal.parentNode.removeChild(modal);	
-				}
-			});
 
 			var modalBody = document.createElement('div');
 			modalBody.className = 'rePictuR-modal-body';
@@ -212,11 +212,59 @@
 			modalContent.className = 'rePictuR-modal-content';
 			modalBody.appendChild(modalContent);
 
+			//
+
 			var tableContent = document.createElement('table');
 			tableContent.className = "rePictuR-table";
 			modalContent.appendChild(tableContent);
 
 			var tr = document.createElement('tr');
+			tr.className = "rePictuR-header";
+			tableContent.appendChild(tr);
+
+			var th = document.createElement('th');
+			th.innerText = 'Total';
+			tr.appendChild(th);
+
+			th = document.createElement('th');
+			th.innerText = 'Before';
+			tr.appendChild(th);
+
+			th = document.createElement('th');
+			th.innerText = 'After';
+			tr.appendChild(th);
+
+			var tr = document.createElement('tr');
+			tr.className = "rePictuR-header";
+			tableContent.appendChild(tr);
+
+			var td = document.createElement('td');
+			td.innerText = imagesStats.length;
+			td.className = "rePictuR-td-ellipsis";
+			tr.appendChild(td);
+
+			td = document.createElement('td');
+			td.innerText = humanFileSize(imagesStats.reduce(function (total, imagesStat) {
+				return imagesStat.size + total;
+			}, 0));
+			
+			tr.appendChild(td);
+
+			td = document.createElement('td');
+			td.innerText = humanFileSize(imagesStats.reduce(function (total, imagesStat) {
+				return imagesStat.proxy_size + total;
+			}, 0));
+
+			tr.appendChild(td);
+
+			// 			
+
+			var tableContent = document.createElement('table');
+			tableContent.className = "rePictuR-table";
+			modalContent.appendChild(tableContent);
+
+			var tr = document.createElement('tr');
+			tr.className = "rePictuR-header";
 			tableContent.appendChild(tr);
 
 			var th = document.createElement('th');
@@ -237,17 +285,27 @@
 				tableContent.appendChild(tr);
 
 				var td = document.createElement('td');
-				td.innerText = imagesStat.url;
 				td.className = "rePictuR-td-ellipsis";
+				td.innerText = imagesStat.url;
 				tr.appendChild(td);
 
 				td = document.createElement('td');
-				td.innerText = humanFileSize(imagesStat.size);
 				tr.appendChild(td);
 
+				var a = document.createElement('a');
+				a.innerText = humanFileSize(imagesStat.size);
+				a.href = imagesStat.url;
+				a.target = "_blank";
+				td.appendChild(a);
+
 				td = document.createElement('td');
-				td.innerText = humanFileSize(imagesStat.proxy_size);
 				tr.appendChild(td);
+
+				a = document.createElement('a');
+				a.innerText = humanFileSize(imagesStat.proxy_size);
+				a.href = imagesStat.url;
+				a.target = "_blank";
+				td.appendChild(a);
 			});
 
 			document.body.appendChild(modal);
@@ -255,6 +313,15 @@
 
 		repictur_ext.replaceProxyImg = function (imagesStats) {
 			imagesStats.forEach(function (imagesStat) {
+				
+				if (
+					!imagesStat.img.parentNode.className ||
+						imagesStat.img.parentNode.className.indexOf('rePictuR-tooltip') === -1
+				) {
+					imagesStat.img.parentNode.className += ' rePictuR-tooltip';
+				}
+
+				imagesStat.img.parentNode.title = 'Gain ' + humanFileSize((imagesStat.size - imagesStat.proxy_size));
 				imagesStat.img.src = imagesStat.rePictureUrl;
 			});
 		};
@@ -265,10 +332,16 @@
 			btn.className = 'rePictuR-btn';
 
 			btn.addEventListener('click', function () {
+				btn.disabled = true;
+				btn.innerText = "rePictuR (...)";
 				repictur_ext.getStats().then(function (imagesStats) {
+					btn.disabled = false;
+					btn.innerText = "rePictuR";
 					repictur_ext.showStats(imagesStats);
 					repictur_ext.replaceProxyImg(imagesStats);
 				}, function (errs) {
+					btn.disabled = false;
+					btn.innerText = "rePictuR";
 					console.error(errs, errs.stack);
 				});
 			});
@@ -282,6 +355,10 @@
 	// Define globally if it doesn't already exist
     if (typeof repictur_ext === 'undefined') {
     	window.repictur_ext = define_repictur_ext();
+
+		var applicationId = "780a28c3-801f-4d31-ba1a-a3029bebfeb1";
+		repictur.initialize(applicationId, "gateway.repictur.com", false);
+
     	repictur_ext.addGetStatsBtn();
     } else {
       throw new Error('repictur_ext is already defined.');

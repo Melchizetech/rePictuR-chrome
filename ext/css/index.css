@@ -58,6 +58,12 @@
 	width: 100%;
 }
 
+.rePictuR-header, 
+.rePictuR-header tr,
+.rePictuR-header tr td {
+    text-align: center;
+}
+
 .rePictuR-table td {
     border-spacing: 10px;
     border-collapse: separate;
@@ -90,4 +96,32 @@
 }
 .rePictuR-modal-close:hover {
     background: #00d9ff;
+}
+
+.rePictuR-tooltip {
+    position: relative;
+}
+
+.rePictuR-tooltip:hover:after{
+    background: #333;
+    background: rgba(0,0,0,.8);
+    border-radius: 5px;
+    top: 20px;
+    color: #fff;
+    content: attr(title);
+    left: 20px;
+    padding: 5px 15px;
+    position: absolute;
+    z-index: 99999;
+}
+
+.rePictuR-tooltip:hover:before{
+    border: solid;
+    border-color: #333 transparent;
+    border-width: 6px 6px 0 6px;
+    bottom: 20px;
+    content: "";
+    left: 50%;
+    position: absolute;
+    z-index: 99;
 }

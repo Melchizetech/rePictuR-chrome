@@ -107,7 +107,7 @@
 	  		var imgType = getImgType(imgUrl);
 
 	  		if (imgType === 'jpg') {
-	  			builder.setJpegFormat(40);
+	  			builder.setJpegFormat(80);
 	  		} else if (imgType === 'png') {
   				builder.setPngFormat();
 	  		}
@@ -304,7 +304,7 @@
 
 				a = document.createElement('a');
 				a.innerText = humanFileSize(imagesStat.proxy_size);
-				a.href = imagesStat.url;
+				a.href = imagesStat.rePictureUrl;
 				a.target = "_blank";
 				td.appendChild(a);
 			});
@@ -322,7 +322,13 @@
 					imagesStat.img.parentNode.className += ' rePictuR-tooltip';
 				}
 
-				imagesStat.img.parentNode.title = 'Gain ' + humanFileSize((imagesStat.size - imagesStat.proxy_size));
+				if (imagesStat.width != imagesStat.proxy_width || imagesStat.height != imagesStat.proxy_height) {
+					var redim = 'Resized! - ';
+				} else {
+					var redim = '';
+				}
+
+				imagesStat.img.parentNode.title =  redim + 'Gain ' + humanFileSize((imagesStat.size - imagesStat.proxy_size));
 				imagesStat.img.src = imagesStat.rePictureUrl;
 			});
 		};
